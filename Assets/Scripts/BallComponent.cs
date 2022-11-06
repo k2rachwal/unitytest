@@ -10,7 +10,7 @@ public class BallComponent : MonoBehaviour
     void Start()
     {
         frames = 0;
-        Debug.Log("Hello World!");
+        //Debug.Log("Hello World!");
  
     }
     // Update is called once per frame
@@ -18,6 +18,7 @@ public class BallComponent : MonoBehaviour
     {
         ++frames;
         Debug.Log("Frames passed: " + frames);
-        //Debug.Log("Time since last frame: " + Time.deltaTime);
+        Debug.Log("Time since last frame: " + Time.deltaTime);
+        Debug.Log("Frames per second: " + (1 / Time.deltaTime));
     }
 }
