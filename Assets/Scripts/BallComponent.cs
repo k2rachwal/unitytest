@@ -19,6 +19,6 @@ public class BallComponent : MonoBehaviour
         ++frames;
         Debug.Log("Frames passed: " + frames);
         Debug.Log("Time since last frame: " + Time.deltaTime);
-        Debug.Log("Frames per second: " + (1 / Time.deltaTime));
+        Debug.Log("Current frames per second: " + (1 / Time.deltaTime));
     }
 }
