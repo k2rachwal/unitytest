@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class BallComponent : MonoBehaviour
 {
+    int frames;
+
     // Start is called before the first frame update
     void Start()
     {
+        frames = 0;
         Debug.Log("Hello World!");
+ 
     }
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Time since last frame: " + Time.deltaTime);
+        ++frames;
+        Debug.Log("Frames passed: " + frames);
+        //Debug.Log("Time since last frame: " + Time.deltaTime);
     }
 }
