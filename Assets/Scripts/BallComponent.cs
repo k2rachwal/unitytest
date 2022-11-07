@@ -17,14 +17,10 @@ public class BallComponent : MonoBehaviour
     private void Update()
     {
         if (transform.localScale.x < 3.0f)
-         {
+        {
             transform.localScale += Speed * Time.deltaTime * Vector3.up;
             transform.localScale += Speed * Time.deltaTime * Vector3.right;
             transform.localScale += Speed * Time.deltaTime * Vector3.forward;
-        }
-        else
-        {
-            // transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
         }
 
 
