@@ -4,21 +4,29 @@ using UnityEngine;
 
 public class BallComponent : MonoBehaviour
 {
-    int frames;
+    public float Speed = 1.0f;
 
-    // Start is called before the first frame update
+
     void Start()
     {
-        frames = 0;
-        //Debug.Log("Hello World!");
- 
+
     }
-    // Update is called once per frame
-    void Update()
+
+
+
+    private void Update()
     {
-        ++frames;
-        Debug.Log("Frames passed: " + frames);
-        Debug.Log("Time since last frame: " + Time.deltaTime);
-        Debug.Log("Current frames per second: " + (1 / Time.deltaTime));
+        if (transform.localScale.x < 3.0f)
+         {
+            transform.localScale += Speed * Time.deltaTime * Vector3.up;
+            transform.localScale += Speed * Time.deltaTime * Vector3.right;
+            transform.localScale += Speed * Time.deltaTime * Vector3.forward;
+        }
+        else
+        {
+            // transform.localScale = new Vector3(3.0f, 3.0f, 3.0f);
+        }
+
+
     }
 }
