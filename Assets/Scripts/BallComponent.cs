@@ -11,19 +11,19 @@ public class BallComponent : MonoBehaviour
         MoveDown,
         MoveLeft,
         MoveRight,
-        Rotate,
+     // Rotate,
         getBigger,
         spinAndMoveRight
     }
     public float Speed = 1.0f;
     public List<BallInstruction> Instructions = new List<BallInstruction>();
     private int CurrentInstruction = 0;
-    private float TimeInInstruction = 0.0f;
-    private float InstructionLength = 0.0f;
+    public float InstructionLength = 1.0f;
     Vector3 myVector = new Vector3(1.0f, 1.0f, 1.0f);
     private Vector3 vecRotation = Vector3.zero;
     public float TurboSpeed = 10.0f;
-
+    private Vector3 startPosition = new Vector3(0.0f, 0.0f, 0.0f);
+    private Vector3 startScale = new Vector3(0.0f, 0.0f, 0.0f);
 
     void Start()
     {
@@ -32,6 +32,7 @@ public class BallComponent : MonoBehaviour
         Debug.Log("New State: " + State);
 
         **/
+        startPosition = transform.position;
     }
 
 
@@ -42,75 +43,41 @@ public class BallComponent : MonoBehaviour
 
         if (CurrentInstruction < Instructions.Count)
         {
-            InstructionLength += Time.deltaTime;
+            
+           
             float RealSpeed = Speed * Time.deltaTime;
 
             switch (Instructions[CurrentInstruction])
             {
                 case BallInstruction.MoveUp:
                     transform.position += Vector3.up * RealSpeed;
-                    if (InstructionLength > 1.4f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
                     break;
 
                 case BallInstruction.MoveDown:
                     transform.position += Vector3.down * RealSpeed;
-                    if (InstructionLength > 1.0f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
                     break;
 
                 case BallInstruction.MoveLeft:
                     transform.position += Vector3.left * RealSpeed;
-                    if (InstructionLength > 0.5f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
                     break;
 
                 case BallInstruction.MoveRight:
                     transform.position += Vector3.right * RealSpeed;
-                    if (InstructionLength > 4.0f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
                     break;
 
-                case BallInstruction.Rotate:
-                    vecRotation += Vector3.forward * TurboSpeed;
-                    transform.rotation = Quaternion.Euler(vecRotation);
-                    if (InstructionLength > 2.0f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
-                    break;
+                //case BallInstruction.Rotate:
+                //    vecRotation += Vector3.forward * TurboSpeed;
+                //    transform.rotation = Quaternion.Euler(vecRotation);
+                //    break;
 
                 case BallInstruction.getBigger:
                     transform.localScale += RealSpeed * myVector;
-                    if (InstructionLength > 2.0f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
                     break;
 
                 case BallInstruction.spinAndMoveRight:
                     vecRotation += Vector3.back * TurboSpeed;
                     transform.rotation = Quaternion.Euler(vecRotation);
                     transform.position += Vector3.right * RealSpeed;
-                    if (InstructionLength > 5.0f)
-                    {
-                        InstructionLength = 0.0f;
-                        ++CurrentInstruction;
-                    }
                     break;
 
                 default:
@@ -118,7 +85,19 @@ public class BallComponent : MonoBehaviour
                     break;
             }
 
-          
+            if (Vector3.Distance(transform.position, startPosition) > InstructionLength)
+            {
+                startPosition = transform.position;
+                ++CurrentInstruction;
+
+            }
+            else if ((transform.localScale.x - startScale.x) > InstructionLength)
+            {
+                Debug.Log("działa");
+                startScale = transform.localScale;
+                ++CurrentInstruction;
+            }
+            
         }
 
 
@@ -128,7 +107,6 @@ public class BallComponent : MonoBehaviour
              
          }
         **/
-
-
+    
     }
 }
