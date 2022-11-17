@@ -302,3 +302,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 1
+  Instructions: 01000000060000000500000002000000
