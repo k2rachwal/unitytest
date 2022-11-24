@@ -8,11 +8,12 @@ public class BallComponent : MonoBehaviour
     private SpringJoint2D m_connectedJoint;
     private Rigidbody2D m_connectedBody;
     public float SlingStart = 0.5f;
-    public float MaxSpringDistance = 13f;
+    public float MaxSpringDistance = 0.01f;
     private LineRenderer m_lineRenderer;
     private TrailRenderer m_trailRenderer;
     private bool m_hitTheGround = false;
-
+    private Vector3 m_startPosition;
+    private Quaternion m_startRotation;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -21,14 +22,23 @@ public class BallComponent : MonoBehaviour
             m_hitTheGround = true;
         }
     }
-    private void OnMouseDrag()
+
+    private void SetLineRendererPoints()
     {
-        m_trailRenderer.enabled = false;
-        Vector2 halfSpling = new Vector2(m_connectedBody.position.x + 0.5f, m_connectedBody.position.y);
+        Vector3 halfSpling = new Vector3(m_connectedBody.position.x + 0.5f, m_connectedBody.position.y, m_connectedBody.transform.position.z);
         Vector2 halfSpling2 = new Vector2(m_connectedBody.position.x - 0.5f, m_connectedBody.position.y);
         m_lineRenderer.positionCount = 3;
         m_lineRenderer.SetPositions(new Vector3[] { halfSpling2, transform.position, halfSpling });
+       
+    }
+
+    private void OnMouseDrag()
+    {
+        m_trailRenderer.enabled = false;
         m_rigidbody.simulated = false;
+
+        SetLineRendererPoints();
+
         if (GameplayManager.Instance.Pause)
         {
             return;
@@ -41,40 +51,59 @@ public class BallComponent : MonoBehaviour
         if (CurJointDistance > MaxSpringDistance)
         {
             Vector2 direction = (newBallPos - m_connectedBody.position).normalized;
-            transform.position = m_connectedBody.position + direction * MaxSpringDistance;
+            transform.position = m_connectedBody.position + (direction * MaxSpringDistance);
         }
         else
         {
             transform.position = newBallPos;
         }
+
         m_hitTheGround = false;
     }
+
     private void OnMouseUp()
-        {
+    {
         m_rigidbody.simulated = true;
-        }
+    }
 
     public bool IsSimulated()
-        {
+    {
         return m_rigidbody.simulated;
-        }
+    }
 
     public float GetPhysicsSpeed()
-        {
+    {
         return m_rigidbody.velocity.magnitude;
+    }
 
-        }
+    private void Restart()
+    {
+        transform.position = m_startPosition;
+        transform.rotation = m_startRotation;
+
+        m_rigidbody.velocity = Vector3.zero;
+        m_rigidbody.angularVelocity = 0.0f;
+        m_rigidbody.simulated = true;
+
+        m_connectedJoint.enabled = true;
+        m_lineRenderer.enabled = true;
+        m_trailRenderer.enabled = false;
+
+        SetLineRendererPoints();
+    }
+
 
 
     private void Start()
-        {
+    {
         m_lineRenderer = GetComponent<LineRenderer>();
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_connectedJoint = GetComponent<SpringJoint2D>();
         m_connectedBody = m_connectedJoint.connectedBody;
         m_trailRenderer = GetComponent<TrailRenderer>();
         m_trailRenderer.enabled = false;
-
+        m_startPosition = transform.position;
+        m_startRotation = transform.rotation;
 
     }
 
@@ -87,7 +116,15 @@ public class BallComponent : MonoBehaviour
             m_connectedJoint.enabled = false;
             m_lineRenderer.enabled = false;
             m_trailRenderer.enabled = true;
+            Debug.Log("działa");
         }
-        m_trailRenderer.enabled = !m_hitTheGround;
+        if (m_hitTheGround)
+        {
+            m_trailRenderer.enabled = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.R))
+          Restart();
+
     }
 }

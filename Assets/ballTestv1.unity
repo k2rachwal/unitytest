@@ -662,7 +662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SlingStart: 0.5
-  MaxSpringDistance: 5
+  MaxSpringDistance: 6
 --- !u!50 &1553474299
 Rigidbody2D:
   serializedVersion: 4
