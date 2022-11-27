@@ -14,9 +14,19 @@ public class BallComponent : MonoBehaviour
     private bool m_hitTheGround = false;
     private Vector3 m_startPosition;
     private Quaternion m_startRotation;
+    private AudioSource m_audioSource;
+    public AudioClip PullSound;
+    public AudioClip ShootSound;
+    public AudioClip HitTheGroundSound;
+    public AudioClip RestartSound;
+    private Animator m_animator;
+    private ParticleSystem m_particles;
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        m_animator.enabled = true;
+        m_animator.Play(0); // 0 tutaj to nr warstwy animacji, gdzie domyślna to 0
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             m_hitTheGround = true;
@@ -34,6 +44,7 @@ public class BallComponent : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        m_audioSource.PlayOneShot(PullSound);
         m_trailRenderer.enabled = false;
         m_rigidbody.simulated = false;
 
@@ -59,11 +70,16 @@ public class BallComponent : MonoBehaviour
         }
 
         m_hitTheGround = false;
+
+        
+        
     }
 
     private void OnMouseUp()
     {
+        m_audioSource.PlayOneShot(ShootSound);
         m_rigidbody.simulated = true;
+        m_particles.Play();
     }
 
     public bool IsSimulated()
@@ -90,6 +106,8 @@ public class BallComponent : MonoBehaviour
         m_trailRenderer.enabled = false;
 
         SetLineRendererPoints();
+        
+
     }
 
 
@@ -104,6 +122,9 @@ public class BallComponent : MonoBehaviour
         m_trailRenderer.enabled = false;
         m_startPosition = transform.position;
         m_startRotation = transform.rotation;
+        m_audioSource = GetComponent<AudioSource>();
+        m_animator = GetComponentInChildren<Animator>();
+        m_particles = GetComponentInChildren<ParticleSystem>();
 
     }
 
@@ -121,10 +142,13 @@ public class BallComponent : MonoBehaviour
         if (m_hitTheGround)
         {
             m_trailRenderer.enabled = false;
+            m_audioSource.PlayOneShot(HitTheGroundSound);
         }
 
         if (Input.GetKeyUp(KeyCode.R))
-          Restart();
-
+        {
+            m_audioSource.PlayOneShot(RestartSound);
+            Restart();
+        }
     }
 }

@@ -16,14 +16,22 @@ public class CameraController : MonoBehaviour
         originalPosition = transform.position;
       
     }
-    void Update()
-        {
+    private void Restart()
+    {
+        transform.position = new Vector3(0, 0, 0);
 
-        }
+    }
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.R))
+            {
+            Restart();
+            }
+    }
 
 
     void FixedUpdate()
-        {
+    {
 
         BallSpeed = followTarget.GetPhysicsSpeed();
 
@@ -31,6 +39,7 @@ public class CameraController : MonoBehaviour
                 return;
             transform.position = Vector3.MoveTowards(transform.position, originalPosition + followTarget.transform.position, BallSpeed);
 
-        }
+    }
+
     
 }
