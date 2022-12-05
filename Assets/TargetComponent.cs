@@ -5,14 +5,15 @@ using UnityEngine;
 public class TargetComponent : MonoBehaviour
 {
     private ParticleSystem m_particles;
-    private bool m_hitTheTarget = false;
+    //private bool m_hitTheTarget = false;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
        
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Ball"))
         {
-            m_hitTheTarget = true;
+            //m_hitTheTarget = true;
+            m_particles.Play();
         }
     }
 
@@ -25,11 +26,11 @@ public class TargetComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (m_hitTheTarget)
-        {
-            Debug.Log("is HIT");
-            m_particles.Play();
-        }
+        //if (m_hitTheTarget)
+        //{
+        //    Debug.Log("is HIT");
+          
+        //}
 
     }
 }
