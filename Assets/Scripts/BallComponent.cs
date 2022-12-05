@@ -137,7 +137,7 @@ public class BallComponent : MonoBehaviour
             m_connectedJoint.enabled = false;
             m_lineRenderer.enabled = false;
             m_trailRenderer.enabled = true;
-            Debug.Log("działa");
+            //Debug.Log("działa");
         }
         if (m_hitTheGround)
         {
