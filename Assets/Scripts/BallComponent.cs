@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallComponent : MonoBehaviour
+public class BallComponent : MonoBehaviour, IRestartableObject
+
 {
     private Rigidbody2D m_rigidbody;
     private SpringJoint2D m_connectedJoint;
@@ -22,6 +23,17 @@ public class BallComponent : MonoBehaviour
     private Animator m_animator;
     private ParticleSystem m_particles;
 
+    private void DoPlay()
+    {
+        m_rigidbody.simulated = true;
+    }
+
+
+    private void DoPause()
+    {
+        m_rigidbody.simulated = false;
+    }
+   
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -50,10 +62,10 @@ public class BallComponent : MonoBehaviour
 
         SetLineRendererPoints();
 
-        if (GameplayManager.Instance.Pause)
-        {
-            return;
-        }
+        //if (GameplayManager.Instance.Pause)
+        //{
+         //   return;
+        //}
     
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 newBallPos = new Vector3(worldPos.x, worldPos.y);
@@ -92,7 +104,7 @@ public class BallComponent : MonoBehaviour
         return m_rigidbody.velocity.magnitude;
     }
 
-    private void Restart()
+    public void DoRestart()
     {
         transform.position = m_startPosition;
         transform.rotation = m_startRotation;
@@ -114,6 +126,8 @@ public class BallComponent : MonoBehaviour
 
     private void Start()
     {
+        GameplayManager.OnGamePaused += DoPause;
+        GameplayManager.OnGamePlaying += DoPlay;
         m_lineRenderer = GetComponent<LineRenderer>();
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_connectedJoint = GetComponent<SpringJoint2D>();
@@ -147,8 +161,15 @@ public class BallComponent : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.R))
         {
-            m_audioSource.PlayOneShot(RestartSound);
-            Restart();
+           // m_audioSource.PlayOneShot(RestartSound);
+           // Restart();
         }
     }
+    void OnDestroy()
+    {
+        GameplayManager.OnGamePaused -= DoPause;
+        GameplayManager.OnGamePlaying -= DoPlay;
+    }
+
+    
 }
