@@ -3,10 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class GameplayManager : Singleton<GameplayManager>
 {
     List<IRestartableObject> m_restartableObjects = new List<IRestartableObject>();
-
+    private HUDController m_HUD;
+    private int m_points = 0;
+    public int Points
+    {
+        get { return m_points; }
+        set
+        {
+            m_points = value;
+            m_HUD.UpdatePoints(m_points);
+        }
+    }
     private void GetAllRestartableObjects()
     {
         m_restartableObjects.Clear();
@@ -62,7 +73,9 @@ public class GameplayManager : Singleton<GameplayManager>
         {
             m_state = EGameState.Playing;
             GetAllRestartableObjects();
-        }
+            m_HUD = FindObjectOfType<HUDController>();
+            Points = 0;
+    }
         //Pause = false;
 
     
@@ -71,10 +84,19 @@ public class GameplayManager : Singleton<GameplayManager>
 
     private void Restart()
     {
+        Points = 0;
         foreach (var restartableObject in m_restartableObjects)
             restartableObject.DoRestart();
     }
 
+    public void PlayPause()
+    {
+        switch (GameState)
+        {
+            case EGameState.Playing: { GameState = EGameState.Paused; } break;
+            case EGameState.Paused: { GameState = EGameState.Playing; } break;
+        }
+    }
 
     void Update()
 
@@ -82,8 +104,9 @@ public class GameplayManager : Singleton<GameplayManager>
 
         if (Input.GetKeyUp(KeyCode.R))
             Restart();
-
         if (Input.GetKeyUp(KeyCode.Space))
+            PlayPause();
+        /*if (Input.GetKeyUp(KeyCode.Space))
         {
             switch (GameState)
             {
@@ -101,7 +124,8 @@ public class GameplayManager : Singleton<GameplayManager>
                     }
                     break;
             }
-        }
+        }*/
+
         //if (Input.GetKeyUp(KeyCode.Space))
         //    Pause = !Pause;
 

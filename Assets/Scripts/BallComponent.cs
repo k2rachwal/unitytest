@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BallComponent : MonoBehaviour, IRestartableObject
+public class BallComponent : InteractiveComponent
 
 {
-    private Rigidbody2D m_rigidbody;
     private SpringJoint2D m_connectedJoint;
     private Rigidbody2D m_connectedBody;
     public float SlingStart = 0.5f;
@@ -13,8 +12,6 @@ public class BallComponent : MonoBehaviour, IRestartableObject
     private LineRenderer m_lineRenderer;
     private TrailRenderer m_trailRenderer;
     private bool m_hitTheGround = false;
-    private Vector3 m_startPosition;
-    private Quaternion m_startRotation;
     private AudioSource m_audioSource;
     public AudioClip PullSound;
     public AudioClip ShootSound;
@@ -23,17 +20,7 @@ public class BallComponent : MonoBehaviour, IRestartableObject
     private Animator m_animator;
     private ParticleSystem m_particles;
 
-    private void DoPlay()
-    {
-        m_rigidbody.simulated = true;
-    }
 
-
-    private void DoPause()
-    {
-        m_rigidbody.simulated = false;
-    }
-   
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -61,11 +48,6 @@ public class BallComponent : MonoBehaviour, IRestartableObject
         m_rigidbody.simulated = false;
 
         SetLineRendererPoints();
-
-        //if (GameplayManager.Instance.Pause)
-        //{
-         //   return;
-        //}
     
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 newBallPos = new Vector3(worldPos.x, worldPos.y);
@@ -104,11 +86,9 @@ public class BallComponent : MonoBehaviour, IRestartableObject
         return m_rigidbody.velocity.magnitude;
     }
 
-    public void DoRestart()
+    public override void DoRestart()
     {
-        transform.position = m_startPosition;
-        transform.rotation = m_startRotation;
-
+        base.DoRestart();
         m_rigidbody.velocity = Vector3.zero;
         m_rigidbody.angularVelocity = 0.0f;
         m_rigidbody.simulated = true;
@@ -123,19 +103,16 @@ public class BallComponent : MonoBehaviour, IRestartableObject
     }
 
 
+ 
+    protected override void Start()
 
-    private void Start()
     {
-        GameplayManager.OnGamePaused += DoPause;
-        GameplayManager.OnGamePlaying += DoPlay;
+        base.Start();
         m_lineRenderer = GetComponent<LineRenderer>();
-        m_rigidbody = GetComponent<Rigidbody2D>();
         m_connectedJoint = GetComponent<SpringJoint2D>();
         m_connectedBody = m_connectedJoint.connectedBody;
         m_trailRenderer = GetComponent<TrailRenderer>();
         m_trailRenderer.enabled = false;
-        m_startPosition = transform.position;
-        m_startRotation = transform.rotation;
         m_audioSource = GetComponent<AudioSource>();
         m_animator = GetComponentInChildren<Animator>();
         m_particles = GetComponentInChildren<ParticleSystem>();
@@ -151,7 +128,6 @@ public class BallComponent : MonoBehaviour, IRestartableObject
             m_connectedJoint.enabled = false;
             m_lineRenderer.enabled = false;
             m_trailRenderer.enabled = true;
-            //Debug.Log("działa");
         }
         if (m_hitTheGround)
         {
@@ -159,17 +135,9 @@ public class BallComponent : MonoBehaviour, IRestartableObject
             m_audioSource.PlayOneShot(HitTheGroundSound);
         }
 
-        if (Input.GetKeyUp(KeyCode.R))
-        {
-           // m_audioSource.PlayOneShot(RestartSound);
-           // Restart();
-        }
+      
     }
-    void OnDestroy()
-    {
-        GameplayManager.OnGamePaused -= DoPause;
-        GameplayManager.OnGamePlaying -= DoPlay;
-    }
+ 
 
     
 }

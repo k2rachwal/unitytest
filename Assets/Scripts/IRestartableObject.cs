@@ -4,7 +4,8 @@ using UnityEngine;
 
 
 
-    public interface IRestartableObject
+public interface IRestartableObject
     {
         void DoRestart();
-    }
+   
+}
