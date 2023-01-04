@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using System; // musimy to dodać, by móc obsługiwać wyjątki
 
 public class GameplayManager : Singleton<GameplayManager>
 {
     List<IRestartableObject> m_restartableObjects = new List<IRestartableObject>();
     private HUDController m_HUD;
     private int m_points = 0;
+
+    private void TestThrow()
+    {
+        throw new NullReferenceException("Test exception");
+    }
+
     public int Points
     {
         get { return m_points; }
@@ -75,6 +81,22 @@ public class GameplayManager : Singleton<GameplayManager>
             GetAllRestartableObjects();
             m_HUD = FindObjectOfType<HUDController>();
             Points = 0;
+
+        int[] Test = new int[2] { 0, 0 };
+        //Test[2] = 1;
+        try
+        {
+            Test[2] = 1;
+            TestThrow();
+        }
+        catch (IndexOutOfRangeException e)
+        {
+            Debug.Log("Index Exception: " + e.Message);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Exception: " + e.Message);
+        }
     }
         //Pause = false;
 
@@ -82,7 +104,7 @@ public class GameplayManager : Singleton<GameplayManager>
 
     // Update is called once per frame
 
-    private void Restart()
+    public void Restart()
     {
         Points = 0;
         foreach (var restartableObject in m_restartableObjects)
@@ -101,7 +123,8 @@ public class GameplayManager : Singleton<GameplayManager>
     void Update()
 
     {
-
+        if (Input.GetKeyUp(KeyCode.Escape))
+        GameState = EGameState.Paused;
         if (Input.GetKeyUp(KeyCode.R))
             Restart();
         if (Input.GetKeyUp(KeyCode.Space))
