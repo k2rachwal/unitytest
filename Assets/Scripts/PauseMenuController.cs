@@ -51,6 +51,7 @@ public class PauseMenuController : MonoBehaviour
     }
     private void OnYes()
     {
+        SaveManager.Instance.SaveSettings();
         Application.Quit();
     
     }
@@ -85,7 +86,7 @@ public class PauseMenuController : MonoBehaviour
 
         GameplayManager.OnGamePaused += OnPause;
         GameplayManager.OnGamePlaying += OnGamePlaying;
-
+        
     }
 
     // Update is called once per frame

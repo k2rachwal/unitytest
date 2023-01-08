@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System; // musimy to dodać, by móc obsługiwać wyjątki
+using System.Threading.Tasks;
 
 public class GameplayManager : Singleton<GameplayManager>
 {
@@ -97,8 +98,54 @@ public class GameplayManager : Singleton<GameplayManager>
         {
             Debug.Log("Exception: " + e.Message);
         }
+        //StartCoroutine(TestCoroutine());
+        //SecondTestAsync();
+        StartCoroutine(TestFPS());
     }
-        //Pause = false;
+    //Pause = false;
+
+
+
+    IEnumerator TestCoroutine()
+    {
+        Debug.Log("Starting TestCoroutine");
+
+        yield return new WaitForSeconds(1.0f);
+
+        Debug.Log("Resuming after 1 second");
+
+        while (true)
+        {
+            Debug.Log("Coroutine called");
+            yield return null;
+        }
+    }
+    IEnumerator TestFPS()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1.0f);
+            Debug.Log("FPS:" + Time.frameCount / Time.time);
+        }
+
+    }
+    void Destroy()
+    {
+        StopAllCoroutines();
+    }
+    async Task TestAsync()
+    {
+        Debug.Log("Starting async method");
+        await Task.Delay(TimeSpan.FromSeconds(3));
+        Debug.Log("Async done after 3 seconds");
+    }
+
+    async void SecondTestAsync()
+    {
+        Debug.Log("Starting second async method");
+        await TestAsync();
+        Debug.Log("Second async done");
+    }
 
     
 
