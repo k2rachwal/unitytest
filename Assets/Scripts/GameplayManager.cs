@@ -10,6 +10,9 @@ public class GameplayManager : Singleton<GameplayManager>
     List<IRestartableObject> m_restartableObjects = new List<IRestartableObject>();
     private HUDController m_HUD;
     private int m_points = 0;
+    public int LifetimeHits = 0;
+    //public GameObject PrefabRef;
+    public GameSettingsDatabase GameDatabase;
 
     private void TestThrow()
     {
@@ -79,9 +82,12 @@ public class GameplayManager : Singleton<GameplayManager>
         private void Start()
         {
             m_state = EGameState.Playing;
-            GetAllRestartableObjects();
+            
             m_HUD = FindObjectOfType<HUDController>();
             Points = 0;
+            GameObject.Instantiate(GameDatabase.TargetPrefab, new Vector3(-2.5f, 0.5f, -3.0f), Quaternion.identity);
+            GameObject.Instantiate(GameDatabase.TargetPrefab, new Vector3(2.5f, 0.5f, -3.0f), Quaternion.identity);
+        GetAllRestartableObjects();
 
         int[] Test = new int[2] { 0, 0 };
         //Test[2] = 1;
@@ -203,7 +209,8 @@ public class GameplayManager : Singleton<GameplayManager>
         // {
         //     Application.Quit();
         // }
-
+        LifetimeHits = Points;
+       // Debug.Log(LifetimeHits);
 
     }
 }

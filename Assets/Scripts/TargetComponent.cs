@@ -20,6 +20,7 @@ public class TargetComponent : InteractiveComponent
         {  
             m_particles.Play();
             GameplayManager.Instance.Points += 1;
+            GameObject.Destroy(this.gameObject, 1.0f);
         }
     }
 

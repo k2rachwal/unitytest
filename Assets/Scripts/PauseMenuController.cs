@@ -12,10 +12,16 @@ public class PauseMenuController : MonoBehaviour
     public Button ResumeButton;
     public Button QuitButton;
     public Button Restart;
+    public Button Options;
     public GameObject Panel;
     public GameObject Areyousure;
+    public GameObject OptionsPanel;
     public Button Yes;
     public Button No;
+    public Button AcceptButton;
+    //public Button CancelButton;
+    public Button Back;
+    private float m_initialVolume = 0.0f;
 
     public void SetPanelVisible(bool visible)
     {
@@ -24,6 +30,10 @@ public class PauseMenuController : MonoBehaviour
     public void SetAreyousureVisible(bool visible)
     {
         Areyousure.SetActive(visible);
+    }
+    public void SetOptionsVisible(bool visible)
+    {
+        OptionsPanel.SetActive(visible);
     }
 
     private void OnPause()
@@ -60,6 +70,18 @@ public class PauseMenuController : MonoBehaviour
         SetPanelVisible(true);
         SetAreyousureVisible(false);
     }
+    private void OnOptions()
+    {
+        SetOptionsVisible(true);
+        SetPanelVisible(false);
+    }
+    private void OnBack()
+    {
+        SetOptionsVisible(false);
+        SetPanelVisible(true);
+    }
+
+
     private void OnRestart()
     {
         GameplayManager.Instance.Restart();
@@ -69,9 +91,28 @@ public class PauseMenuController : MonoBehaviour
                 restartableObject.DoRestart();
         
     }
+    private void OnEnable()
+    {
+        m_initialVolume = AudioListener.volume;
+    }
+
+    private void OnAccept()
+    {
+        SaveManager.Instance.SaveData.m_masterVolume = AudioListener.volume;
+        SaveManager.Instance.SaveSettings();
+        SetOptionsVisible(false);
+        SetPanelVisible(true);
+    }
+
+    private void OnCancel()
+    {
+        AudioListener.volume = m_initialVolume;
+        SetOptionsVisible(false);
+        SetPanelVisible(true);
+    }
 
 
-   
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,9 +121,14 @@ public class PauseMenuController : MonoBehaviour
         Restart.onClick.AddListener(delegate { OnRestart(); });
         Yes.onClick.AddListener(delegate { OnYes(); });
         No.onClick.AddListener(delegate { OnNo(); });
+        Options.onClick.AddListener(delegate { OnOptions(); });
+        AcceptButton.onClick.AddListener(delegate { OnAccept(); });
+        Back.onClick.AddListener(delegate { OnCancel(); });
+
 
         SetPanelVisible(false);
         SetAreyousureVisible(false);
+        SetOptionsVisible(false);
 
         GameplayManager.OnGamePaused += OnPause;
         GameplayManager.OnGamePlaying += OnGamePlaying;
